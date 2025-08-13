@@ -1,0 +1,61 @@
+version: 2
+updates:
+  # Enable version updates for Maven
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    target-branch: "main"
+    commit-message:
+      prefix: "chore"
+      prefix-development: "chore"
+      include: "scope"
+    assignees:
+      - "norvaldb"
+    reviewers:
+      - "norvaldb"
+    labels:
+      - "dependencies"
+      - "automated"
+    # Group updates for same package ecosystem
+    groups:
+      spring-boot:
+        patterns:
+          - "org.springframework.boot:*"
+          - "org.springframework:*"
+          - "org.springframework.security:*"
+      testing:
+        patterns:
+          - "io.kotest:*"
+          - "io.mockk:*"
+          - "org.testcontainers:*"
+      maven-plugins:
+        patterns:
+          - "*:maven-*"
+          - "org.apache.maven.plugins:*"
+    # Ignore specific dependencies that require manual review
+    ignore:
+      - dependency-name: "com.oracle.database.jdbc:*"
+        # Oracle JDBC drivers need careful version management
+      - dependency-name: "org.flywaydb:*"
+        # Flyway versions should be coordinated with DB changes
+    
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/.github/workflows"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    assignees:
+      - "norvaldb"
+    labels:
+      - "github-actions"
+      - "automated"

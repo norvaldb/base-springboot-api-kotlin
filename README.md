@@ -240,6 +240,32 @@ Notes:
 - Kotest integrates with Allure via `AllureTestReporter`. See `src/test/kotlin/ProjectConfig.kt`.
 - The Allure Maven plugin is not bound to the lifecycle; run the goals above after `mvn test` or `mvn verify`.
 
+### Security Scanning with OWASP Dependency Check
+
+```bash
+# Run OWASP dependency vulnerability scan
+mvn org.owasp:dependency-check-maven:check
+
+# Generate report without failing build
+mvn org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=11
+```
+
+**Generated Reports:**
+- **HTML Report**: `target/dependency-check-report.html`
+- **JSON Report**: `target/dependency-check-report.json`
+- **XML Report**: `target/dependency-check-report.xml`
+
+**Configuration:**
+- **Fail Threshold**: CVSS score ≥ 7.0
+- **Suppressions**: `owasp-suppressions.xml` (false positive management)
+- **Test Dependencies**: Excluded from scanning for performance
+- **NVD API**: Configure `NVD_API_KEY` environment variable for faster updates
+
+**Setting up NVD API Key:**
+1. Get a free API key from [NVD](https://nvd.nist.gov/developers/request-an-api-key)
+2. **Local Development**: Set environment variable `export NVD_API_KEY=your-key-here`
+3. **GitHub Actions**: Add `NVD_API_KEY` as a repository secret in Settings → Secrets and variables → Actions
+
 ### Example Test Structure
 
 ```kotlin
@@ -265,7 +291,71 @@ class UserFacadeTest : FunSpec({
 })
 ```
 
-## 🗄️ Database
+## � GitHub Actions CI/CD
+
+### Automated Testing & Reporting
+
+This project includes comprehensive GitHub Actions workflows for automated testing and reporting:
+
+![CI Pipeline](https://github.com/norvaldb/base-springboot-api-kotlin/workflows/CI%20Pipeline%20with%20Testing%20and%20Reporting/badge.svg)
+![Test Reports](https://github.com/norvaldb/base-springboot-api-kotlin/workflows/Test%20Reports%20Only/badge.svg)
+
+### Available Workflows
+
+#### 1. CI Pipeline (`ci.yml`)
+**Triggers**: Push to main/develop, Pull Requests to main
+
+**Features:**
+- ✅ Runs all tests (unit + integration)
+- ✅ Generates JaCoCo coverage reports
+- ✅ Creates Allure test reports with history
+- ✅ Posts coverage comments on PRs
+- ✅ Uploads reports to GitHub Pages
+- ✅ Codecov integration
+- ✅ OWASP dependency scanning
+- ✅ Artifact uploads with retention
+
+#### 2. Test Reports Only (`test-reports.yml`)
+**Triggers**: Push to main/develop, Pull Requests to main
+
+**Features:**
+- ✅ Lightweight testing workflow
+- ✅ JaCoCo coverage analysis
+- ✅ Allure report generation
+- ✅ Test result summaries
+- ✅ Downloadable artifacts
+
+### Accessing Reports
+
+**JaCoCo Coverage Reports:**
+- **PR Comments**: Automatic coverage reports on pull requests
+- **Artifacts**: Download from Actions → Workflow Run → Artifacts
+- **Codecov**: Available at https://codecov.io/gh/norvaldb/base-springboot-api-kotlin
+
+**Allure Test Reports:**
+- **Artifacts**: Download from Actions → Workflow Run → Artifacts  
+- **GitHub Pages**: https://norvaldb.github.io/base-springboot-api-kotlin (if enabled)
+
+### Setting up GitHub Pages (Optional)
+
+To enable automatic deployment of test reports to GitHub Pages:
+
+1. Go to **Repository Settings** → **Pages**
+2. **Source**: Deploy from a branch
+3. **Branch**: `gh-pages`
+4. **Folder**: `/` (root)
+
+The CI pipeline will automatically deploy Allure reports with test history to your GitHub Pages site.
+
+### Coverage Requirements
+
+The workflows enforce coverage thresholds:
+- **Overall Coverage**: 80% minimum
+- **Changed Files**: 80% minimum
+
+Failed coverage checks will be reported in PR comments and workflow status.
+
+## �🗄️ Database
 
 ### Oracle Database Setup
 
