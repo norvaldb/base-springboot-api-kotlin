@@ -76,7 +76,7 @@ jobs:
     
     # Run tests and build
     - name: Run tests and build
-      run: mvn clean verify -B
+      run: mvn clean verify -B -Dnvd.api.key=${{ secrets.NVD_API_KEY }}
       env:
         MAVEN_OPTS: "-Xmx2048m"
         NVD_API_KEY: ${{ secrets.NVD_API_KEY }}

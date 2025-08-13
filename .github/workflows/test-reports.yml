@@ -27,7 +27,7 @@ jobs:
         cache: 'maven'
     
     - name: Run tests with coverage and reporting
-      run: mvn clean install -B
+      run: mvn clean install -B -Dnvd.api.key=${{ secrets.NVD_API_KEY }}
       env:
         NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
     

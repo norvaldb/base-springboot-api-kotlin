@@ -57,6 +57,8 @@
         <allure.maven.version>2.15.2</allure.maven.version>
         <jacoco.version>0.8.11</jacoco.version>
         <owasp.dependency.check.version>12.1.3</owasp.dependency.check.version>
+        <!-- NVD API Key configuration with fallback -->
+        <nvd.api.key>${env.NVD_API_KEY}</nvd.api.key>
     </properties>
 
     <dependencies>
@@ -441,8 +443,8 @@
                     <!-- Disable database - use file-based caching -->
                     <databaseDriverName></databaseDriverName>
                     <connectionString></connectionString>
-                    <!-- NVD API configuration -->
-                    <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
+                    <!-- NVD API configuration with fallback -->
+                    <nvdApiKey>${nvd.api.key}</nvdApiKey>
                     <nvdMaxRetryCount>10</nvdMaxRetryCount>
                     <nvdApiDelay>4000</nvdApiDelay>
                 </configuration>
