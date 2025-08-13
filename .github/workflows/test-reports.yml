@@ -70,10 +70,39 @@ jobs:
         retention-days: 14
     
     # Test Results Summary
-    - name: Publish Test Results
+    - name: Check for test result files
+      id: check-tests
+      run: |
+        if [ -d "target/surefire-reports" ] && [ "$(find target/surefire-reports -name 'TEST-*.xml' | wc -l)" -gt 0 ]; then
+          echo "surefire-exists=true" >> $GITHUB_OUTPUT
+          echo "Found $(find target/surefire-reports -name 'TEST-*.xml' | wc -l) surefire test files"
+        else
+          echo "surefire-exists=false" >> $GITHUB_OUTPUT
+          echo "No surefire test files found"
+        fi
+        
+        if [ -d "target/failsafe-reports" ] && [ "$(find target/failsafe-reports -name 'TEST-*.xml' | wc -l)" -gt 0 ]; then
+          echo "failsafe-exists=true" >> $GITHUB_OUTPUT
+          echo "Found $(find target/failsafe-reports -name 'TEST-*.xml' | wc -l) failsafe test files"
+        else
+          echo "failsafe-exists=false" >> $GITHUB_OUTPUT
+          echo "No failsafe test files found"
+        fi
+    
+    - name: Publish Surefire Test Results
       uses: dorny/test-reporter@v1
-      if: always()
+      if: always() && steps.check-tests.outputs.surefire-exists == 'true'
       with:
-        name: 'Test Results'
-        path: 'target/surefire-reports/*.xml,target/failsafe-reports/*.xml'
+        name: 'Unit Test Results'
+        path: 'target/surefire-reports/TEST-*.xml'
         reporter: 'java-junit'
+        fail-on-error: false
+    
+    - name: Publish Failsafe Test Results  
+      uses: dorny/test-reporter@v1
+      if: always() && steps.check-tests.outputs.failsafe-exists == 'true'
+      with:
+        name: 'Integration Test Results'
+        path: 'target/failsafe-reports/TEST-*.xml'
+        reporter: 'java-junit'
+        fail-on-error: false

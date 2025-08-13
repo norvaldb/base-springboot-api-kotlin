@@ -119,21 +119,47 @@ jobs:
         path: allure-report/
         retention-days: 30
     
-    # Deploy to GitHub Pages (optional)
+    # Deploy to GitHub Pages (optional - only if Pages is enabled)
+    - name: Check GitHub Pages availability
+      if: github.ref == 'refs/heads/main'
+      run: |
+        echo "🔍 Checking GitHub Pages configuration..."
+        echo "If Pages is not enabled, the deployment steps will be skipped."
+        echo "To enable GitHub Pages:"
+        echo "1. Go to Settings → Pages"
+        echo "2. Source: Deploy from a branch"
+        echo "3. Branch: gh-pages"
+    
     - name: Setup Pages
       if: github.ref == 'refs/heads/main'
+      id: setup-pages
       uses: actions/configure-pages@v4
+      continue-on-error: true
     
     - name: Upload to GitHub Pages
-      if: github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/main' && steps.setup-pages.outcome == 'success'
       uses: actions/upload-pages-artifact@v3
       with:
         path: gh-pages
+      continue-on-error: true
     
     - name: Deploy to GitHub Pages
-      if: github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/main' && steps.setup-pages.outcome == 'success'
       id: deployment
       uses: actions/deploy-pages@v4
+      continue-on-error: true
+    
+    - name: GitHub Pages Status
+      if: github.ref == 'refs/heads/main'
+      run: |
+        if [ "${{ steps.setup-pages.outcome }}" == "success" ]; then
+          echo "✅ GitHub Pages deployment completed successfully!"
+          echo "📄 Reports available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
+        else
+          echo "⚠️ GitHub Pages is not enabled for this repository."
+          echo "📊 Test reports are still available as downloadable artifacts."
+          echo "💡 To enable Pages: Repository Settings → Pages → Deploy from branch → gh-pages"
+        fi
 
   # Optional: Separate job for security scanning
   security-scan:
