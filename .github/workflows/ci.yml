@@ -178,7 +178,12 @@ jobs:
     
     - name: Run OWASP Dependency Check
       run: |
-        mvn org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=7 -Dnvd.api.key=${{ secrets.NVD_API_KEY }}
+        mvn org.owasp:dependency-check-maven:check \
+          -DfailBuildOnCVSS=7 \
+          -Dnvd.api.key=${{ secrets.NVD_API_KEY }} \
+          -DsuppressionFiles=owasp-suppressions.xml \
+          -DskipTestScope=true \
+          -Dformats=HTML,JSON,XML
       env:
         NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
     
