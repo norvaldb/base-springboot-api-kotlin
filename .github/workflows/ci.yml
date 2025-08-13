@@ -133,7 +133,7 @@ jobs:
     - name: Setup Pages
       if: github.ref == 'refs/heads/main'
       id: setup-pages
-      uses: actions/configure-pages@v4
+      uses: actions/configure-pages@v5
       continue-on-error: true
     
     - name: Upload to GitHub Pages
