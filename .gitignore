@@ -114,6 +114,9 @@ flyway.conf
 *.tmp
 *.temp
 
+# Allure
+.allure/
+
 # Application specific
 application-local.yml
 application-local.properties

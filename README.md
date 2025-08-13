@@ -13,6 +13,8 @@ A comprehensive Spring Boot API template built with Kotlin, following SOLID prin
 - **Flyway** - Database migrations and versioning
 - **Kotest** - Kotlin-native testing framework
 - **TestContainers** - Integration testing with real database
+- **JaCoCo** - Code coverage analysis and reporting
+- **Allure** - Advanced test reporting with coverage integration
 - **Maven** - Dependency management and build automation
 - **SOLID Principles** - Clean architecture implementation
 
@@ -116,18 +118,74 @@ mvn flyway:migrate
 ### 5. Build and Run
 
 ```bash
-# Build the application
-mvn clean compile
+# Build the application with automatic reports
+mvn clean install
 
-# Run tests
+# Run tests only
 mvn test
 
 # Run integration tests
 mvn verify
 
+# Generate code coverage report (manual)
+mvn jacoco:report
+
+# Generate Allure report (manual)
+mvn allure:report
+
 # Start the application
 mvn spring-boot:run
 ```
+
+## 📊 Code Coverage & Reporting
+
+### Automatic Report Generation
+Both JaCoCo coverage and Allure test reports are **automatically generated** during `mvn install`:
+
+```bash
+# Single command generates everything
+mvn clean install
+```
+
+**Generated Reports:**
+- **JaCoCo Coverage**: `target/site/jacoco/index.html`
+- **Allure Test Report**: `target/allure-report/index.html`
+
+### Manual Report Generation
+### Manual Report Generation
+For individual report generation (optional):
+
+```bash
+# Generate coverage report only
+mvn jacoco:report
+
+# Generate Allure report only
+mvn allure:report
+
+# Serve interactive Allure report
+mvn allure:serve
+```
+
+### Allure Test Reports
+### Allure Test Reports
+```bash
+# Serve interactive Allure report
+mvn allure:serve
+```
+
+**Coverage Reports Location:**
+- **JaCoCo HTML**: `target/site/jacoco/index.html`
+- **JaCoCo XML**: `target/site/jacoco/jacoco.xml` (for CI/CD)
+- **Allure Report**: `target/allure-report/index.html`
+
+**Performance Optimizations:**
+- Kotest autoscan disabled for faster test startup
+- Reports generated automatically during build lifecycle
+
+**Coverage Thresholds:**
+- Coverage enforcement is available but currently disabled
+- Uncomment the `jacoco-check` execution in `pom.xml` to enable
+- Default thresholds: Instruction 70%, Branch 60%
 
 ### 6. Access the Application
 
@@ -169,6 +227,18 @@ mvn test
 # Run integration tests (includes TestContainers)
 mvn verify
 ```
+
+### Allure Report
+
+This project is configured to produce Allure results for both unit and integration tests.
+
+- Results directory: `target/allure-results`
+- Generate static report: `mvn allure:report` (output in `target/site/allure-maven/index.html`)
+- Serve report locally: `mvn allure:serve`
+
+Notes:
+- Kotest integrates with Allure via `AllureTestReporter`. See `src/test/kotlin/ProjectConfig.kt`.
+- The Allure Maven plugin is not bound to the lifecycle; run the goals above after `mvn test` or `mvn verify`.
 
 ### Example Test Structure
 
