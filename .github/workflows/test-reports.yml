@@ -90,7 +90,7 @@ jobs:
         fi
     
     - name: Publish Surefire Test Results
-      uses: dorny/test-reporter@v1
+      uses: dorny/test-reporter@v2
       if: always() && steps.check-tests.outputs.surefire-exists == 'true'
       with:
         name: 'Unit Test Results'
@@ -99,7 +99,7 @@ jobs:
         fail-on-error: false
     
     - name: Publish Failsafe Test Results  
-      uses: dorny/test-reporter@v1
+      uses: dorny/test-reporter@v2
       if: always() && steps.check-tests.outputs.failsafe-exists == 'true'
       with:
         name: 'Integration Test Results'
